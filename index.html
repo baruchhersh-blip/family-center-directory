@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ספר החברים – הקהילה המקצועית</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Frank+Ruhl+Libre:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1f2a33;--muted:#5b6670;--bg:#fbf8f3;--sand:#f3ece1;--teal:#1f5f5b;--teal2:#2c7a74;--accent:#d9824b;--line:#e6ddcf;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Assistant',Arial,sans-serif;font-size:17px;line-height:1.6}
+a{color:var(--teal2)}
+header{background:linear-gradient(160deg,#1f5f5b,#2f8079);color:#fff;padding:22px 16px}
+.hwrap{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font-family:'Frank Ruhl Libre',Georgia,serif;margin:0;font-size:28px}
+.sub{opacity:.9;font-size:15px}
+.btn{border:0;border-radius:999px;padding:12px 22px;font:inherit;font-weight:800;cursor:pointer;background:var(--accent);color:#fff}
+.btn.ghost{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4)}
+main{max-width:1100px;margin:0 auto;padding:22px 16px 60px}
+.box{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:28px;max-width:460px;margin:40px auto;text-align:center}
+.box h2{font-family:'Frank Ruhl Libre',Georgia,serif;color:var(--teal);margin:0 0 8px}
+input,select{font:inherit;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+.box input{margin:14px 0}
+.msg{margin-top:12px;font-size:15px;color:var(--muted)}
+.msg.err{color:#b3261e}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+.count{color:var(--muted);font-size:15px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;gap:14px;align-items:center}
+.avatar{width:64px;height:64px;border-radius:50%;object-fit:cover;background:var(--sand);flex:0 0 64px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--teal);font-size:24px}
+.name{font-weight:800;font-size:19px;margin:0}
+.prof{color:var(--teal);font-weight:700;font-size:15px}
+.meta{color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--sand);color:var(--teal);border-radius:999px;padding:2px 10px;font-size:13px;font-weight:700}
+.bio{font-size:15px;margin:0}
+.label{font-weight:700;font-size:14px;color:var(--ink)}
+.contact{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px;border-top:1px solid var(--line)}
+.cbtn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-weight:700;font-size:14px;border-radius:999px;padding:6px 12px;background:var(--sand);color:var(--teal)}
+.cbtn.wa{background:#25D366;color:#fff}
+.empty{text-align:center;color:var(--muted);padding:40px 0}
+.hidden{display:none !important}
+@media (max-width:760px){.filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div>
+      <h1>ספר החברים</h1>
+      <div class="sub">הקהילה המקצועית לאנשי טיפול וייעוץ · לחברי הקהילה בלבד</div>
+    </div>
+    <button id="logout" class="btn ghost hidden">יציאה</button>
+  </div>
+</header>
+
+<main>
+  <section id="login" class="box hidden">
+    <h2>כניסה לחברי הקהילה</h2>
+    <p class="meta">הקלידו את המייל שאיתו נרשמתם לקהילה, ונשלח לכם קישור כניסה. בלי סיסמה.</p>
+    <input id="email" type="email" placeholder="המייל שלכם" autocomplete="email" dir="ltr">
+    <button id="send" class="btn">שלחו לי קישור כניסה</button>
+    <div id="loginMsg" class="msg"></div>
+  </section>
+
+  <section id="notMember" class="box hidden">
+    <h2>עוד לא מצאנו אתכם בקהילה</h2>
+    <p class="meta">המייל שאיתו התחברתם לא משויך לחבר/ה פעיל/ה. אם זו טעות, כתבו לברוך ונסדר.</p>
+  </section>
+
+  <section id="dir" class="hidden">
+    <div class="filters">
+      <input id="q" type="search" placeholder="חיפוש לפי שם, מקצוע, התמחות, אזור…">
+      <select id="fWith"><option value="">עם מי עובדים – הכול</option></select>
+      <select id="fMode"><option value="">פרונטלי / אונליין – הכול</option><option>פרונטלי</option><option>אונליין</option></select>
+      <select id="fArea"><option value="">אזור – הכול</option></select>
+    </div>
+    <div id="count" class="count"></div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty hidden">לא נמצאו חברים שמתאימים לחיפוש.</div>
+  </section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/+esm';
+
+// מפתח ציבורי (publishable) – בטוח להצגה בדפדפן. הגישה לנתונים מוגבלת ב-RLS ובתצוגה directory_for_members.
+const SUPABASE_URL = 'https://xtvdmcwxgphggoefbqin.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_XNDpDMf0aFPB03CcWGLjuw_nMwfP8sp';
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const $ = (id) => document.getElementById(id);
+const show = (id, on) => $(id).classList.toggle('hidden', !on);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let rows = [];
+
+async function route() {
+  const { data: { session } } = await sb.auth.getSession();
+  show('logout', !!session);
+  if (!session) { show('login', true); show('dir', false); show('notMember', false); return; }
+  show('login', false);
+  const { data, error } = await sb.from('directory_for_members').select('*').order('full_name');
+  if (error) { show('notMember', true); return; }
+  const { data: isMember } = await sb.rpc('is_active_member');
+  if (!isMember) { show('notMember', true); show('dir', false); return; }
+  rows = data || [];
+  fillFilters();
+  show('dir', true);
+  render();
+}
+
+function fillFilters() {
+  const withSet = new Set(), areaSet = new Set();
+  rows.forEach(r => { (r.works_with || []).forEach(w => withSet.add(w)); if (r.area) areaSet.add(r.area.trim()); });
+  $('fWith').innerHTML = '<option value="">עם מי עובדים – הכול</option>' + [...withSet].sort().map(v => `<option>${esc(v)}</option>`).join('');
+  $('fArea').innerHTML = '<option value="">אזור – הכול</option>' + [...areaSet].sort().map(v => `<option>${esc(v)}</option>`).join('');
+}
+
+function render() {
+  const q = $('q').value.trim().toLowerCase();
+  const w = $('fWith').value, m = $('fMode').value, a = $('fArea').value;
+  const list = rows.filter(r => {
+    const hay = [r.full_name, r.profession, r.email, r.phone, r.specialties_text, r.area, r.languages, r.bio].join(' ').toLowerCase();
+    return (!q || hay.includes(q))
+      && (!w || (r.works_with || []).includes(w))
+      && (!m || (r.meeting_mode || []).includes(m))
+      && (!a || (r.area || '').trim() === a);
+  });
+  $('count').textContent = `${list.length} חברים`;
+  show('empty', list.length === 0);
+  $('grid').innerHTML = list.map(r => {
+    const initial = esc((r.full_name || '?').trim().charAt(0));
+    const avatar = r.photo_url ? `<img class="avatar" src="${esc(r.photo_url)}" alt="">` : `<div class="avatar">${initial}</div>`;
+    const chips = (r.works_with || []).map(c => `<span class="chip">${esc(c)}</span>`).join('');
+    const mode = (r.meeting_mode || []).join(' · ');
+    const digits = String(r.phone || '').replace(/\D/g, '');
+    const intl = digits.startsWith('0') ? '972' + digits.slice(1) : digits;
+    const contact = [
+      digits ? `<a class="cbtn wa" href="https://wa.me/${intl}" target="_blank" rel="noopener">וואטסאפ</a>` : '',
+      digits ? `<a class="cbtn" href="tel:${esc(r.phone)}">${esc(r.phone)}</a>` : '',
+      r.email ? `<a class="cbtn" href="mailto:${esc(r.email)}">מייל</a>` : '',
+    ].join('');
+    const site = r.website ? `<a href="${esc(/^https?:/i.test(r.website) ? r.website : 'https://' + r.website)}" target="_blank" rel="noopener">אתר / רשת חברתית</a>` : '';
+    return `<article class="card">
+      <div class="top">${avatar}<div><p class="name">${esc(r.full_name)}</p><div class="prof">${esc(r.profession)}</div>
+      <div class="meta">${esc(r.area)}${mode ? ' · ' + esc(mode) : ''}${r.languages ? ' · ' + esc(r.languages) : ''}</div></div></div>
+      ${r.specialties_text ? `<div><span class="label">התמחויות: </span>${esc(r.specialties_text)}</div>` : ''}
+      ${chips ? `<div class="chips">${chips}</div>` : ''}
+      ${r.bio ? `<p class="bio">${esc(r.bio)}</p>` : ''}
+      ${site}
+      ${contact ? `<div class="contact">${contact}</div>` : ''}
+    </article>`;
+  }).join('');
+}
+
+$('send').addEventListener('click', async () => {
+  const email = $('email').value.trim();
+  const msg = $('loginMsg');
+  msg.className = 'msg';
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.textContent = 'נא להקליד כתובת מייל תקינה.'; msg.classList.add('err'); return; }
+  $('send').disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
+  $('send').disabled = false;
+  if (error) { msg.textContent = 'לא הצלחנו לשלוח קישור כרגע. נסו שוב בעוד כמה דקות.'; msg.classList.add('err'); return; }
+  msg.textContent = 'שלחנו לכם קישור כניסה למייל. פתחו אותו מאותו מכשיר.';
+});
+$('logout').addEventListener('click', async () => { await sb.auth.signOut(); route(); });
+['q','fWith','fMode','fArea'].forEach(id => $(id).addEventListener('input', render));
+sb.auth.onAuthStateChange(() => route());
+route();
+</script>
+</body>
+</html>
